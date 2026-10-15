@@ -1,0 +1,1399 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <!-- 版權聲明宣告 -->
+  <meta name="author" content="內科專師 曾妍鳳">
+  <meta name="copyright" content="製表人： 內科專師 曾妍鳳 （連絡電話26-8112） 版權所有，未經授權禁止使用與重製">
+  <title>成組 CPCR 臨床稽核評值與年度品管追蹤系統</title>
+  <style>
+    :root {
+      --color-a: #f59f97;
+      --color-a-dark: #d8695e;
+      --color-a-light: #fef0ef;
+      --color-b: #9f75d3;
+      --color-b-dark: #7b4eb5;
+      --color-b-light: #f5effc;
+      --color-c: #8fe0f5;
+      --color-c-dark: #2fa7c4;
+      --color-c-light: #edfafd;
+      --color-d: #92d97a;
+      --color-d-dark: #5fa546;
+      --color-d-light: #f1faee;
+      --color-e: #fedb88;
+      --color-e-dark: #c99320;
+      --color-e-light: #fff9e6;
+
+      --text-main: #202b38;
+      --text-muted: #5e6d82;
+      --bg-page: #f8fafc;
+      --card-bg: #ffffff;
+      --border-color: #e2e8f0;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --shadow-sm: 0 2px 8px rgba(32, 43, 56, 0.04);
+      --shadow-md: 0 6px 18px rgba(159, 117, 211, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+    }
+
+    /* 防止被任意反白選取代碼 */
+    body {
+      margin: 0;
+      background: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.5;
+      padding-bottom: 40px;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    header {
+      background: linear-gradient(135deg, #7b4eb5 0%, #9f75d3 50%, #4dbad6 100%);
+      color: white;
+      padding: 16px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: var(--shadow-md);
+      backdrop-filter: blur(8px);
+    }
+    .header-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+    .header-title h1 {
+      margin: 0;
+      font-size: 1.45rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .header-year-select {
+      background: rgba(255, 255, 255, 0.28);
+      border: 1.5px solid rgba(255, 255, 255, 0.6);
+      color: #fff;
+      font-size: 1.25rem;
+      font-weight: 800;
+      border-radius: var(--radius-sm);
+      padding: 2px 8px;
+      outline: none;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+    }
+    .header-year-select option {
+      color: var(--text-main);
+      background: #fff;
+      font-weight: 600;
+    }
+
+    .score-summary-bar {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: var(--radius-md);
+      padding: 8px 16px;
+    }
+    .score-item {
+      text-align: center;
+      min-width: 75px;
+    }
+    .score-item .lbl {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      opacity: 0.95;
+    }
+    .score-item .val {
+      font-size: 1.4rem;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+    .score-item.divider {
+      border-left: 1px solid rgba(255, 255, 255, 0.35);
+      padding-left: 14px;
+    }
+    .total-val {
+      color: #fff;
+      background: rgba(254, 219, 136, 0.35);
+      border-radius: 6px;
+      padding: 0 8px;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 22px auto;
+      padding: 0 16px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 22px;
+      padding: 22px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 0;
+      margin-bottom: 16px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--color-b-dark);
+      border-bottom: 2px solid var(--color-c-light);
+      padding-bottom: 8px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .staff-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 12px;
+      background: var(--color-c-light);
+      border: 1.5px dashed var(--color-c-dark);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-top: 14px;
+    }
+
+    .input-field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .input-field label {
+      font-size: 0.83rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .input-field input, .input-field select {
+      height: 40px;
+      padding: 0 12px;
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      font-size: 0.92rem;
+      color: var(--text-main);
+      background: #fff;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .input-field input:focus, .input-field select:focus {
+      border-color: var(--color-b);
+      box-shadow: 0 0 0 3px rgba(159, 117, 211, 0.2);
+    }
+    .staff-tag {
+      color: white;
+      font-size: 0.7rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .tab-nav {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 18px;
+      border-bottom: 2px solid var(--border-color);
+      padding-bottom: 2px;
+      overflow-x: auto;
+    }
+    .tab-btn {
+      background: none;
+      border: none;
+      padding: 11px 20px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-radius: var(--radius-md) var(--radius-md) 0 0;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .tab-btn:hover {
+      background: var(--color-c-light);
+      color: var(--color-b-dark);
+    }
+    .tab-btn.active-tab {
+      background: white;
+      color: var(--color-b-dark);
+      border-bottom: 3.5px solid var(--color-b);
+      box-shadow: 0 -3px 8px rgba(159, 117, 211, 0.08);
+    }
+
+    .item-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: center;
+      padding: 16px 10px;
+      border-bottom: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+    }
+    .item-row:hover { background-color: #fafcfe; }
+    .item-number {
+      font-weight: 800;
+      color: var(--color-b);
+      margin-right: 6px;
+    }
+    .badge-points {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--color-e-dark);
+      background: var(--color-e-light);
+      border: 1px solid var(--color-e);
+      padding: 1px 8px;
+      border-radius: 10px;
+      margin-top: 5px;
+    }
+
+    .options-container {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .option-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 7px 14px;
+      border: 1.5px solid var(--border-color);
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.88rem;
+      background: #fff;
+      transition: all 0.18s;
+      user-select: none;
+    }
+    .option-pill:hover {
+      border-color: var(--color-c-dark);
+      background: var(--color-c-light);
+    }
+    .option-pill input[type="radio"] { display: none; }
+    .option-pill.active {
+      background: var(--color-d-light);
+      border-color: var(--color-d-dark);
+      color: var(--color-d-dark);
+      font-weight: 700;
+    }
+    .option-pill.zero-active {
+      background: var(--color-a-light) !important;
+      border-color: var(--color-a-dark) !important;
+      color: var(--color-a-dark) !important;
+    }
+
+    .miss-alert-card {
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      margin-bottom: 10px;
+      background: #fff5f5;
+      border: 1px solid #fed7d7;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .audio-record-box {
+      margin-top: 14px;
+      background: #fdfaf6;
+      border: 1.5px dashed var(--color-e-dark);
+      border-radius: var(--radius-md);
+      padding: 14px;
+    }
+    .audio-ctrl-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .rec-indicator {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #bbb;
+    }
+    .rec-indicator.recording {
+      background: #f44336;
+      animation: pulse-red 1s infinite;
+    }
+    @keyframes pulse-red {
+      0% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.2); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    .stat-dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+    .stat-card {
+      background: #fff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      text-align: center;
+      border-top: 4px solid var(--color-b);
+    }
+    .stat-card .val {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin: 6px 0;
+    }
+    .stat-card .desc {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .history-table-wrap {
+      overflow-x: auto;
+      margin-top: 16px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+    }
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      text-align: left;
+    }
+    table.data-table th {
+      background: #f1f5f9;
+      color: #334155;
+      padding: 10px 12px;
+      font-weight: 700;
+      border-bottom: 1px solid var(--border-color);
+      white-space: nowrap;
+    }
+    table.data-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #edf2f7;
+      white-space: nowrap;
+    }
+    table.data-table tr:hover { background-color: #f8fafc; }
+
+    .btn-group {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+    .btn {
+      padding: 10px 20px;
+      border-radius: var(--radius-md);
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-mint { background: var(--color-d); color: #15470a; }
+    .btn-purple { background: var(--color-b); color: white; }
+    .btn-coral { background: var(--color-a); color: #6d1b13; }
+    .btn-sky { background: var(--color-c); color: #0b4959; }
+
+    .submit-btn-box {
+      margin-top: 24px;
+      padding-top: 18px;
+      border-top: 1.5px dashed var(--border-color);
+      display: flex;
+      justify-content: center;
+    }
+    .btn-submit-exam {
+      background: var(--color-b);
+      color: white;
+      padding: 12px 36px;
+      font-size: 1.05rem;
+      border-radius: 28px;
+      font-weight: 800;
+      box-shadow: var(--shadow-sm);
+    }
+
+    footer.copyright-footer {
+      max-width: 1280px;
+      margin: 30px auto 10px;
+      padding: 16px 20px;
+      border-top: 1.5px dashed #cbd5e1;
+      text-align: center;
+      font-size: 0.86rem;
+      color: #475569;
+    }
+    .copyright-footer .author-badge {
+      display: inline-block;
+      background: var(--color-b-light);
+      color: var(--color-b-dark);
+      border: 1px solid var(--color-b);
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-weight: 800;
+      margin-bottom: 6px;
+      font-size: 0.92rem;
+    }
+    .copyright-footer .notice {
+      font-size: 0.78rem;
+      color: #94a3b8;
+      margin-top: 4px;
+    }
+
+    @media print {
+      header, .tab-nav, .btn-group, .btn, .no-print, .audio-record-box { display: none !important; }
+      body { background: white; padding-bottom: 0; }
+      .card { border: 1px solid #ccc; box-shadow: none; page-break-inside: avoid; }
+      .tab-pane { display: block !important; }
+      .print-header-area { display: block !important; text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 16px; }
+      footer.copyright-footer { border-top: 1px solid #000; color: #000; }
+    }
+    .print-header-area { display: none; }
+  </style>
+</head>
+<body oncontextmenu="return false;" onselectstart="return false;" ondragstart="return false;">
+
+  <header>
+    <div class="header-inner">
+      <div class="header-title">
+        <h1>
+          <span>🩺</span>
+          <!-- 年度切換選單：已移除 114，僅保留 115、116、117、118 -->
+          <select id="headerYearSelect" class="header-year-select" onchange="syncYear(this.value)">
+            <option value="115" selected>115</option>
+            <option value="116">116</option>
+            <option value="117">117</option>
+            <option value="118">118</option>
+          </select>
+          <span>年度 成組 CPCR 臨床稽核評值與品管追蹤系統</span>
+        </h1>
+      </div>
+
+      <div class="score-summary-bar">
+        <div class="score-item">
+          <div class="lbl">A 表 (Airway)</div>
+          <div class="val"><span id="scoreA">0</span><small style="font-size:0.75rem;opacity:0.8;">/52</small></div>
+        </div>
+        <div class="score-item">
+          <div class="lbl">B 表 (主護+流動)</div>
+          <div class="val"><span id="scoreB">0</span><small style="font-size:0.75rem;opacity:0.8;">/48</small></div>
+        </div>
+        <div class="score-item divider">
+          <div class="lbl">整合總分</div>
+          <div class="val total-val"><span id="totalScore">0</span> <small style="font-size:0.8rem;">分</small></div>
+        </div>
+        <div class="score-item" style="border-left: 1px solid rgba(255,255,255,0.35); padding-left: 14px;">
+          <div class="lbl">評等結果 (≥90合格)</div>
+          <div class="val" id="levelBadge" style="font-size:1.15rem; color: #fff;">--</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="print-header-area">
+      <h2 style="margin:0;"><span id="printYear">115</span>年度 成組 CPCR 臨床稽核評核成果報告</h2>
+      <p id="printMetaBar" style="margin:8px 0 0; font-size:0.95rem;"></p>
+    </div>
+
+    <!-- 1. 基本資料 -->
+    <div class="card">
+      <h3 class="section-header">📌 評核基本資料與受評人員名冊（急救團隊編制）</h3>
+      <div class="grid-3">
+        <div class="input-field">
+          <label>受評單位 / 病房 *</label>
+          <input type="text" id="evalDept" placeholder="例如：7A病房、急診醫學部">
+        </div>
+        <div class="input-field">
+          <label>評核日期 *</label>
+          <input type="date" id="evalDate">
+        </div>
+        <div class="input-field">
+          <label>外部稽核單位</label>
+          <input type="text" id="auditUnit" placeholder="例如：護理部品管組 / 急救教育委員會">
+        </div>
+      </div>
+
+      <!-- 考核人員填寫專區：醫師1人、專師1人、護師3人 -->
+      <div class="staff-grid">
+        <div class="input-field">
+          <label><span class="staff-tag" style="background:#5c6bc0;">急救醫師</span> 受評醫師姓名 (1人)</label>
+          <input type="text" id="staffDoctor" placeholder="輸入醫師姓名">
+        </div>
+        <div class="input-field">
+          <label><span class="staff-tag" style="background:var(--color-b-dark);">專科護理師</span> 受評專師姓名 (1人)</label>
+          <input type="text" id="staffNP" placeholder="輸入專師姓名">
+        </div>
+        <div class="input-field">
+          <label><span class="staff-tag" style="background:var(--color-d-dark);">護理師 1</span> 主護護理師</label>
+          <input type="text" id="staffNurse1" placeholder="輸入主護姓名">
+        </div>
+        <div class="input-field">
+          <label><span class="staff-tag" style="background:var(--color-d-dark);">護理師 2</span> 流動護理師</label>
+          <input type="text" id="staffNurse2" placeholder="輸入流動護理師姓名">
+        </div>
+        <div class="input-field">
+          <label><span class="staff-tag" style="background:var(--color-d-dark);">護理師 3</span> 支援 / 按壓通氣護理師</label>
+          <input type="text" id="staffNurse3" placeholder="輸入支援護理師姓名">
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-top: 14px;">
+        <div class="input-field">
+          <label>A 考官姓名 (Airway組)</label>
+          <input type="text" id="examinerA" placeholder="A考官簽名">
+        </div>
+        <div class="input-field">
+          <label>B 考官姓名 (主護+流動組)</label>
+          <input type="text" id="examinerB" placeholder="B考官簽名">
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. 分頁標籤 -->
+    <div class="tab-nav">
+      <button class="tab-btn active-tab" onclick="switchPane('paneA', this)">🫁 表單 A：Airway 呼吸道組 (滿分 52 分)</button>
+      <button class="tab-btn" onclick="switchPane('paneB', this)">⚡ 表單 B：主護 + 流動組 (滿分 48 分)</button>
+      <button class="tab-btn" onclick="switchPane('paneSummary', this)">📋 本次評核總結與缺失即評 (Debriefing)</button>
+      <button class="tab-btn" onclick="switchPane('paneBackend', this)" style="color:var(--color-b-dark); background:var(--color-c-light);">📊 後台數據中心與年度追蹤統計</button>
+    </div>
+
+    <!-- 3. 表單 A -->
+    <div id="paneA" class="tab-pane">
+      <div class="card">
+        <h3 style="margin:0 0 16px; color:var(--color-b-dark);">A 考官評核表（共 20 題，滿分 52 分）</h3>
+        <form id="formA"></form>
+        <div class="submit-btn-box">
+          <button class="btn btn-submit-exam" onclick="submitExam('A')">✓ 送出 A 考官評核成績</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. 表單 B -->
+    <div id="paneB" class="tab-pane" style="display:none;">
+      <div class="card">
+        <h3 style="margin:0 0 16px; color:var(--color-d-dark);">B 考官評核表（共 24 題，滿分 48 分）</h3>
+        <form id="formB"></form>
+        <div class="submit-btn-box">
+          <button class="btn btn-submit-exam" style="background:var(--color-d-dark);" onclick="submitExam('B')">✓ 送出 B 考官評核成績</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. 總結分析與缺失即評 -->
+    <div id="paneSummary" class="tab-pane" style="display:none;">
+      <div class="card">
+        <h3 class="section-header">📢 急救缺失即評即知與團隊 Debriefing 回饋</h3>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <h4 style="margin:0; color:var(--color-a-dark);">⚠️ 扣分/待改進項目追蹤 (<span id="deductBadge">0</span> 項)</h4>
+              <span style="font-size:0.75rem; color:#718096;">現場檢討可直接依此清單逐條叮嚀</span>
+            </div>
+            <div id="deductBox" style="max-height: 430px; overflow-y: auto;">
+              <p style="color:var(--text-muted);">各項目皆獲滿分或尚未開始點選評分。</p>
+            </div>
+          </div>
+
+          <div>
+            <h4 style="margin:0 0 10px; color:var(--text-main);">📝 團隊綜合評語與行動改善計畫 (Debriefing)</h4>
+            <textarea id="overallFeedback" rows="7" style="width:100%; border:1.5px solid var(--border-color); border-radius:var(--radius-sm); padding:10px; font-size:0.92rem; outline:none;" placeholder="輸入本次 CPCR 急救團隊配合狀況與改進方向..."></textarea>
+            
+            <div class="audio-record-box">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <label style="font-size:0.85rem; font-weight:700; color:#5d4037; display:flex; align-items:center; gap:6px;">
+                  <span id="recDot" class="rec-indicator"></span> 🎙️ 急救檢討會現場錄音
+                </label>
+                <span id="recordTimer" style="font-size:0.85rem; font-weight:700; color:var(--color-a-dark); font-family:monospace;">00:00</span>
+              </div>
+              <div class="audio-ctrl-row">
+                <button type="button" id="btnStartRec" class="btn btn-coral" style="padding:6px 12px; font-size:0.82rem;" onclick="startAudioRecording()">🔴 開始錄音</button>
+                <button type="button" id="btnStopRec" class="btn btn-sky" style="padding:6px 12px; font-size:0.82rem;" onclick="stopAudioRecording()" disabled>⏹️ 結束錄音</button>
+                <button type="button" id="btnUploadDrive" class="btn btn-mint" style="padding:6px 12px; font-size:0.82rem; display:none;" onclick="uploadAudioToGoogleDrive()">☁️ 上傳錄音至 Google 雲端</button>
+              </div>
+              
+              <audio id="audioPlayback" controls style="width:100%; height:36px; margin-top:10px; display:none;"></audio>
+              <div id="uploadStatusMsg" style="display:none; margin-top:8px; font-size:0.82rem; padding:4px 10px; border-radius:6px; font-weight:600;"></div>
+            </div>
+
+            <div style="margin-top: 14px; display:flex; gap:10px; justify-content:flex-end;">
+              <button class="btn btn-purple" onclick="saveRecordToDatabase()">💾 儲存並歸檔至後台數據庫</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. 後台數據中心 -->
+    <div id="paneBackend" class="tab-pane" style="display:none;">
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+          <div>
+            <h3 class="section-header" style="margin-bottom:4px; border:none; display:flex; align-items:center; gap:8px;">
+              <span>📈 CPCR 稽核年度數據資料庫與品質追蹤統計</span>
+            </h3>
+            <p style="margin:0; font-size:0.85rem; color:var(--text-muted);">歷史評核資料庫自動累積，提供年度品管指標與追蹤統計（通過基準：≥ 90分）。</p>
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-mint" onclick="exportYearlyReportCSV()">1. 匯出年度品管報表 (CSV/Excel)</button>
+          </div>
+        </div>
+
+        <div class="stat-dashboard">
+          <div class="stat-card" style="border-top-color: var(--color-b);">
+            <div class="desc">總受評場次 / 紀錄數</div>
+            <div class="val" id="statCount">0</div>
+            <div class="desc">急救演練場次</div>
+          </div>
+          <div class="stat-card" style="border-top-color: var(--color-d);">
+            <div class="desc">整體通過率 (≥90分)</div>
+            <div class="val" id="statPassRate" style="color:var(--color-d-dark);">0%</div>
+            <div class="desc">達臨床合格通過比率</div>
+          </div>
+          <div class="stat-card" style="border-top-color: var(--color-e-dark);">
+            <div class="desc">全體平均總得分</div>
+            <div class="val" id="statAvgScore">0</div>
+            <div class="desc">標準滿分 100 分</div>
+          </div>
+          <div class="stat-card" style="border-top-color: var(--color-c-dark);">
+            <div class="desc">A 表平均 (Airway)</div>
+            <div class="val" id="statAvgA">0</div>
+            <div class="desc">滿分 52 分</div>
+          </div>
+          <div class="stat-card" style="border-top-color: var(--color-a-dark);">
+            <div class="desc">B 表平均 (主護/流動)</div>
+            <div class="val" id="statAvgB">0</div>
+            <div class="desc">滿分 48 分</div>
+          </div>
+        </div>
+
+        <h4 style="margin: 18px 0 8px; color:var(--text-main);">歷史評核入庫清單</h4>
+        <div class="history-table-wrap">
+          <table class="data-table" id="historyTable">
+            <thead>
+              <tr>
+                <th>年度</th>
+                <th>評核日期</th>
+                <th>受評單位</th>
+                <th>急救醫師</th>
+                <th>專師 NP</th>
+                <th>護理師 (3位)</th>
+                <th>A表得分 (52)</th>
+                <th>B表得分 (48)</th>
+                <th>總分 (100)</th>
+                <th>評等結果 (≥90通過)</th>
+                <th>雲端錄音存證</th>
+                <th>考官 (A/B)</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="historyTableBody">
+              <tr><td colspan="13" style="text-align:center; color:#94a3b8; padding:20px;">目前尚無儲存的歷史評核資料，請完成評核後點選「儲存並歸檔至後台數據庫」。</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 底部功能按鈕 -->
+    <div class="btn-group no-print" style="margin-top: 14px;">
+      <button class="btn btn-mint" onclick="syncCurrentAuditToGoogleDrive()">2. 同步儲存到 Google 雲端</button>
+      <button class="btn btn-sky" onclick="exportCurrentCSV()">3. 匯出當前場次評核表 (CSV)</button>
+    </div>
+
+    <!-- 版權告示區塊 -->
+    <footer class="copyright-footer">
+      <div class="author-badge">製表人： 內科專師 曾妍鳳 （連絡電話 26-8112）</div>
+      <div>成組 CPCR 臨床急救技能稽核與品質管制專用系統</div>
+      <div class="notice">本系統原始碼受著作權法與智慧財產權保護，未經授權禁止竄改、抄襲、外洩或作為非授權單位之商業用途。</div>
+    </footer>
+  </div>
+
+  <script>
+    // ================= 版權與代碼安全防護層 =================
+    document.addEventListener('contextmenu', function(e) {
+      e.preventDefault();
+      alert("⚠️ 系統版權提示：\n製表人： 內科專師 曾妍鳳 （連絡電話 26-8112）\n本系統代碼禁止未經授權複製或檢視！");
+      return false;
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (
+        e.keyCode === 123 || 
+        (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) ||
+        (e.ctrlKey && (e.keyCode === 85 || e.keyCode === 83))
+      ) {
+        e.preventDefault();
+        alert("⚠️ 系統版權提示：\n製表人： 內科專師 曾妍鳳 （連絡電話 26-8112）\n本系統原始碼受保護，禁止使用開發者工具或提取源碼！");
+        return false;
+      }
+    });
+
+    console.log("%c【版權所有，嚴禁盜用】", "color: red; font-size: 20px; font-weight: bold;");
+    console.log("%c製表人： 內科專師 曾妍鳳 （連絡電話 26-8112）", "color: purple; font-size: 14px; font-weight: bold;");
+    console.log("%c本系統為臨床急救品質管控專用系統，未經授權禁止複製代碼或外流使用。", "color: #555; font-size: 12px;");
+
+    // ================= 業務邏輯模組 =================
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwqG5YLf-teHmvcCEVPlbD1Sf6KjvhKXxDVV2eMzuH1ATDdzSuZ6QvonhbMWFDZKObmMg/exec";
+
+    document.getElementById('evalDate').value = new Date().toISOString().split('T')[0];
+
+    function syncYear(val) {
+      document.getElementById('headerYearSelect').value = val;
+      document.getElementById('printYear').innerText = val;
+      calcScores();
+    }
+
+    // A 表配分精準加總：4+1+4+3+1+2+1+4+2+4+4+4+4+2+2+1+1+6+1+4 = 52 分
+    const questionsA = [
+      { id: "A1", text: "適當的團隊交班 - ISBAR 方式", max: 4, options: [{text:"有", score:4}, {text:"無", score:0}] },
+      { id: "A2", text: "護理師至少達三人(含主護)，護理站支援人員同時推入急救車及電擊器", max: 1, options: [{text:"有", score:1}, {text:"無", score:0}] },
+      { id: "A3", text: "組長(NP或當班Leader)分配工作完成(Assign)", max: 4, options: [{text:"有", score:4}, {text:"無", score:0}] },
+      { id: "A4", text: "(佈置環境)拉上隔簾，隔離病人、墊上急救板或lucas", max: 3, options: [{text:"有", score:3}, {text:"無", score:0}] },
+      { id: "A5", text: "取走枕頭、床頭架、搖平床頭，使病人平躺 - airway", max: 1, options: [{text:"有", score:1}, {text:"無", score:0}] },
+      { id: "A6", text: "打開呼吸道：無頸椎受傷病人使用壓額抬頭 (C-spine受傷病人用提下顎法)", max: 2, options: [{text:"有", score:2}, {text:"沒有 (未打開呼吸道不給分)", score:0}] },
+      { id: "A7", text: "觀察並「判讀」心電圖變化，如呈現無脈之心律立即施行心外按摩", max: 1, options: [{text:"有", score:1}, {text:"沒有", score:0}] },
+      { id: "A8", text: "壓胸及通氣之配合比率為 30:2", max: 4, options: [{text:"有", score:4}, {text:"沒有", score:0}] },
+      { id: "A9", text: "心外按摩者請讀出次數", max: 2, options: [{text:"有", score:2}, {text:"沒有", score:0}] },
+      { id: "A10", text: "心外按摩位置(2)、深度正確(2) - 位置錯、深度錯不給分", max: 4, options: [{text:"全有", score:4}, {text:"沒有", score:0}] },
+      { id: "A11", text: "心外按摩次數至少 100-120 次/每分鐘", max: 4, options: [{text:"全有", score:4}, {text:"沒有", score:0}] },
+      { id: "A12", text: "每 2 分鐘更換胸部按壓人員 (10秒完成)", max: 4, options: [{text:"全有", score:4}, {text:"沒有", score:0}] },
+      { id: "A13", text: "壓胸品質：儘可能持續壓胸不中斷 (超過10秒不給分)", max: 4, options: [{text:"全有", score:4}, {text:"沒有", score:0}] },
+      { id: "A14", text: "將袋瓣罩接上氧氣：壓胸時 30:2(1分) / 有進階呼吸道6秒給一口氣(1分)", max: 2, options: [{text:"全有", score:2}, {text:"單作一項", score:1}, {text:"沒有", score:0}] },
+      { id: "A15", text: "正確壓額抬頭：有無胸部起伏，是否正確 C 形扣法", max: 2, options: [{text:"全有", score:2}, {text:"沒有", score:0}] },
+      { id: "A16", text: "一次取得氧氣配備並迅速接上氧氣(流量15L/min以上，蓄氧袋膨脹)；抽吸用物一次取得、裝妥並測試", max: 1, options: [{text:"全有", score:1}, {text:"沒有", score:0}] },
+      { id: "A17", text: "協助氣管內管放置後，正確放置口咽管 (Oral Airway)", max: 1, options: [{text:"全有", score:1}, {text:"沒有", score:0}] },
+      { id: "A18", text: "移除通條及覆誦Endo深度，協助打Cuff固定Endo記錄管號、深度、ETCO2及氣囊壓 (注意醫師有無聽診)", max: 6, options: [{text:"全有", score:6}, {text:"沒有", score:0}] },
+      { id: "A19", text: "準備隨時抽吸，插管後持續使用袋瓣罩設備給氧或依醫囑使用呼吸器", max: 1, options: [{text:"全有", score:1}, {text:"沒有", score:0}] },
+      { id: "A20", text: "可電擊心律電擊後立即執行心外按摩或Lucas；不可電擊心律立即心外按摩", max: 4, options: [{text:"全有", score:4}, {text:"沒有", score:0}] }
+    ];
+
+    // B 表配分精準加總：1+1+1+2+3+1+1+1+2+3+1+2+3+2+1+2+4+4+1+1+4+3+2+2 = 48 分
+    const questionsB = [
+      { id: "B1", text: "呼喚病人，確定意識狀態", max: 1, options: [{text:"有", score:1}, {text:"無", score:0}] },
+      { id: "B2", text: "觀察病人是否呼吸停止或呼吸異常", max: 1, options: [{text:"有", score:1}, {text:"無", score:0}] },
+      { id: "B3", text: "呼叫護理站支援 (電話、電鈴、家屬協助)", max: 1, options: [{text:"有", score:1}, {text:"無", score:0}] },
+      { id: "B4", text: "以手指觸摸病人「頸動脈」確定是否有脈動 (10秒內完成)", max: 2, options: [{text:"有", score:2}, {text:"無", score:0}] },
+      { id: "B5", text: "檢查EKG導線是否脫落，並評估EKG波形 (非重症單位請先用paddle look)", max: 3, options: [{text:"有", score:3}, {text:"無", score:0}] },
+      { id: "B6", text: "無呼吸無脈搏者，立即執行心外按摩", max: 1, options: [{text:"有", score:1}, {text:"無", score:0}] },
+      { id: "B7", text: "Call 999並通知主治醫師 (值班醫師或非預期急救醫師)", max: 1, options: [{text:"有", score:1}, {text:"無", score:0}] },
+      { id: "B8", text: "靜脈管路建置 - OIC", max: 1, options: [{text:"有", score:1}, {text:"無", score:0}] },
+      { id: "B9", text: "CPR 5個循環 (或兩分鐘) 評估心律", max: 2, options: [{text:"有", score:2}, {text:"無", score:0}] },
+      { id: "B10", text: "正確貼妥EKG Lead位置，選第二導程(lead II)，留一段波形且螢幕面向按壓者", max: 3, options: [{text:"有", score:3}, {text:"無", score:0}] },
+      { id: "B11", text: "一次取得插管用物 (1分鐘內完成備管)", max: 1, options: [{text:"有", score:1}, {text:"無", score:0}] },
+      { id: "B12", text: "確定氣管內管(LMA)無漏氣後消氣備管，通條依技術操作並塗潤滑凝膠 (未測試不給分)", max: 2, options: [{text:"有", score:2}, {text:"無", score:0}] },
+      { id: "B13", text: "記錄 Endotracheal tube 號碼及固定公分數、ETCO2 數值", max: 3, options: [{text:"有", score:3}, {text:"無", score:0}] },
+      { id: "B14", text: "凝膠均勻塗於電擊板，依醫囑正確選擇能量充電，電擊前後需留心電圖記錄", max: 2, options: [{text:"有", score:2}, {text:"無", score:0}] },
+      { id: "B15", text: "體外心律調節器電擊時暫關；體內調節器避開電池；放電時避開導線", max: 1, options: [{text:"有", score:1}, {text:"無", score:0}] },
+      { id: "B16", text: "電擊時執行者喊口令提醒全員避開 (袋瓣罩給氧可繼續執行)", max: 2, options: [{text:"有", score:2}, {text:"無", score:0}] },
+      { id: "B17", text: "接受口頭醫囑覆誦「藥名、劑量、途徑」，記錄者覆誦收到並記錄，組長亦回饋收到", max: 4, options: [{text:"有", score:4}, {text:"無", score:0}] },
+      { id: "B18", text: "記錄急救過程：生命徵象/給藥時間/藥名/劑量/途徑/電擊劑量 (便條紙或護理紀錄單)", max: 4, options: [{text:"有", score:4}, {text:"無 (藥名拼錯不扣，其餘錯不給分)", score:0}] },
+      { id: "B19", text: "外送檢體 (白天由護佐送)", max: 1, options: [{text:"有", score:1}, {text:"無", score:0}] },
+      { id: "B20", text: "連絡家屬或 (自動出院) DAMA 與其他單位交班", max: 1, options: [{text:"有", score:1}, {text:"無", score:0}] },
+      { id: "B21", text: "小組長功能 - 組織領導技巧與監督功能", max: 4, options: [{text:"有", score:4}, {text:"無", score:0}] },
+      { id: "B22", text: "分工及配合度流程是否順暢", max: 3, options: [{text:"有", score:3}, {text:"無", score:0}] },
+      { id: "B23", text: "角色有功能無重複", max: 2, options: [{text:"有功能無重複", score:2}, {text:"重複/無功能", score:0}] },
+      { id: "B24", text: "急救物品功能完整", max: 2, options: [{text:"有", score:2}, {text:"無", score:0}] }
+    ];
+
+    function initQuiz(formId, dataList) {
+      const container = document.getElementById(formId);
+      container.innerHTML = "";
+      dataList.forEach((q, index) => {
+        const row = document.createElement("div");
+        row.className = "item-row";
+        let pills = "";
+        q.options.forEach(opt => {
+          pills += `
+            <label class="option-pill" onclick="handleSelect(this, '${q.id}', ${opt.score})">
+              <input type="radio" name="${q.id}" value="${opt.score}">
+              ${opt.text} (${opt.score}分)
+            </label>
+          `;
+        });
+
+        row.innerHTML = `
+          <div>
+            <div><span class="item-number">${index + 1}.</span>${q.text}</div>
+            <span class="badge-points">標準最高分：${q.max} 分</span>
+          </div>
+          <div class="options-container">
+            ${pills}
+          </div>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function handleSelect(labelEl, name, score) {
+      const parent = labelEl.closest('.options-container');
+      parent.querySelectorAll('.option-pill').forEach(el => el.classList.remove('active', 'zero-active'));
+      if (score === 0) {
+        labelEl.classList.add('zero-active');
+      } else {
+        labelEl.classList.add('active');
+      }
+      const radio = labelEl.querySelector('input[type="radio"]');
+      radio.checked = true;
+      calcScores();
+    }
+
+    function submitExam(type) {
+      calcScores();
+      const score = type === 'A' ? document.getElementById('scoreA').innerText : document.getElementById('scoreB').innerText;
+      const max = type === 'A' ? 52 : 48;
+      alert(`✅ ${type} 考官評核成績已送出！\n得分：${score} / ${max} 分\n已為您切換至「評核總結與缺失即評」頁面。`);
+      const summaryBtn = document.querySelectorAll('.tab-btn')[2];
+      switchPane('paneSummary', summaryBtn);
+    }
+
+    function switchPane(targetId, btnEl) {
+      document.querySelectorAll('.tab-pane').forEach(el => el.style.display = 'none');
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active-tab'));
+      document.getElementById(targetId).style.display = 'block';
+      btnEl.classList.add('active-tab');
+      if (targetId === 'paneBackend') {
+        renderBackendDashboard();
+      }
+    }
+
+    // 分數即評即知 + 通過基準嚴格判定 (≥90分通過)
+    function calcScores() {
+      let aTotal = 0;
+      let bTotal = 0;
+      let lostItems = [];
+
+      questionsA.forEach(q => {
+        const checked = document.querySelector(`input[name="${q.id}"]:checked`);
+        if (checked) {
+          const val = Number(checked.value);
+          aTotal += val;
+          if (val < q.max) {
+            lostItems.push({ id: q.id, text: q.text, lost: (q.max - val), get: val, max: q.max, src: "A表(呼吸道組)" });
+          }
+        }
+      });
+
+      questionsB.forEach(q => {
+        const checked = document.querySelector(`input[name="${q.id}"]:checked`);
+        if (checked) {
+          const val = Number(checked.value);
+          bTotal += val;
+          if (val < q.max) {
+            lostItems.push({ id: q.id, text: q.text, lost: (q.max - val), get: val, max: q.max, src: "B表(主護/流動)" });
+          }
+        }
+      });
+
+      aTotal = Math.min(aTotal, 52);
+      bTotal = Math.min(bTotal, 48);
+      const grandTotal = Math.min(aTotal + bTotal, 100);
+
+      document.getElementById('scoreA').innerText = aTotal;
+      document.getElementById('scoreB').innerText = bTotal;
+      document.getElementById('totalScore').innerText = grandTotal;
+
+      const badge = document.getElementById('levelBadge');
+      if (grandTotal >= 90) {
+        badge.innerHTML = `<span style="color:#d4fc79; font-weight:800;">✓ 合格通過 (${grandTotal}分)</span>`;
+      } else {
+        badge.innerHTML = `<span style="color:var(--color-a); font-weight:800;">✗ 不合格/待加強 (${grandTotal}分)</span>`;
+      }
+
+      const deductBox = document.getElementById('deductBox');
+      document.getElementById('deductBadge').innerText = lostItems.length;
+      if (lostItems.length === 0) {
+        deductBox.innerHTML = `
+          <div style="background:#f0fff4; border:1px solid #c6f6d5; padding:16px; border-radius:8px; text-align:center;">
+            <div style="font-size:1.5rem; margin-bottom:4px;">🎯</div>
+            <div style="color:var(--color-d-dark); font-weight:700;">目前無扣分缺失項目！急救團隊技術精準到位。</div>
+          </div>
+        `;
+      } else {
+        let html = "";
+        lostItems.forEach(item => {
+          html += `
+            <div class="miss-alert-card">
+              <div>
+                <span style="font-size:0.75rem; background:#fed7d7; color:#9b2c2c; padding:2px 6px; border-radius:4px; font-weight:700;">${item.src} - 題號 ${item.id}</span>
+                <div style="font-weight:700; color:#2d3748; margin-top:4px; font-size:0.92rem;">${item.text}</div>
+                <div style="font-size:0.78rem; color:#718096; margin-top:2px;">
+                  實得：<strong style="color:#e53e3e;">${item.get} 分</strong> ｜ 標準滿分：${item.max} 分
+                </div>
+              </div>
+              <div style="font-size:1.15rem; font-weight:800; color:#e53e3e; white-space:nowrap; margin-left:14px;">
+                -${item.lost} 分
+              </div>
+            </div>
+          `;
+        });
+        deductBox.innerHTML = html;
+      }
+
+      const year = document.getElementById('headerYearSelect').value || "115";
+      const dept = document.getElementById('evalDept').value || "--";
+      const date = document.getElementById('evalDate').value || "--";
+      const dr = document.getElementById('staffDoctor').value || "未填";
+      const np = document.getElementById('staffNP').value || "未填";
+      const n1 = document.getElementById('staffNurse1').value || "未填";
+      const n2 = document.getElementById('staffNurse2').value || "未填";
+      const n3 = document.getElementById('staffNurse3').value || "未填";
+      const resultText = grandTotal >= 90 ? "合格通過" : "不合格(待加強)";
+
+      document.getElementById('printMetaBar').innerText = 
+        `年度：${year}年 ｜ 單位：${dept} ｜ 日期：${date} ｜ 團隊成員：[醫師] ${dr}、[專師] ${np}、[護理師] ${n1}, ${n2}, ${n3} ｜ 總成績：${grandTotal} 分 (${resultText}) (A表:${aTotal}/52, B表:${bTotal}/48)`;
+    }
+
+    // ================= 錄音功能模組 =================
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let recTimerInterval = null;
+    let recSeconds = 0;
+    let currentAudioBlob = null;
+    let cloudDriveFileUrl = "";
+
+    async function startAudioRecording() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        audioChunks = [];
+        
+        mediaRecorder.ondataavailable = event => {
+          if (event.data.size > 0) audioChunks.push(event.data);
+        };
+
+        mediaRecorder.onstop = () => {
+          currentAudioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+          const audioUrl = URL.createObjectURL(currentAudioBlob);
+          const audioPlayback = document.getElementById('audioPlayback');
+          audioPlayback.src = audioUrl;
+          audioPlayback.style.display = 'block';
+          document.getElementById('btnUploadDrive').style.display = 'inline-flex';
+          setUploadStatus("🎙️ 錄音完成，點擊上方按鈕即可上傳至 Google 雲端！", "#0288d1", "#e1f5fe");
+        };
+
+        mediaRecorder.start();
+        document.getElementById('btnStartRec').disabled = true;
+        document.getElementById('btnStopRec').disabled = false;
+        document.getElementById('recDot').classList.add('recording');
+        document.getElementById('btnUploadDrive').style.display = 'none';
+
+        recSeconds = 0;
+        recTimerInterval = setInterval(() => {
+          recSeconds++;
+          document.getElementById('recordTimer').innerText = formatTime(recSeconds);
+        }, 1000);
+      } catch (err) {
+        alert("無法開啟麥克風：請確認瀏覽器已允許麥克風權限！");
+      }
+    }
+
+    function stopAudioRecording() {
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+        mediaRecorder.stream.getTracks().forEach(track => track.stop());
+      }
+      clearInterval(recTimerInterval);
+      document.getElementById('btnStartRec').disabled = false;
+      document.getElementById('btnStopRec').disabled = true;
+      document.getElementById('recDot').classList.remove('recording');
+    }
+
+    function formatTime(sec) {
+      const m = String(Math.floor(sec / 60)).padStart(2, '0');
+      const s = String(sec % 60).padStart(2, '0');
+      return `${m}:${s}`;
+    }
+
+    function uploadAudioToGoogleDrive() {
+      if (!currentAudioBlob) {
+        alert("目前尚無可上傳的錄音！");
+        return;
+      }
+
+      const year = document.getElementById('headerYearSelect').value || "115";
+      const dept = document.getElementById('evalDept').value || "未填單位";
+      const date = document.getElementById('evalDate').value || new Date().toISOString().split('T')[0];
+      const fileName = `${year}年度_${dept}_CPCR檢討會錄音_${date}.webm`;
+
+      const uploadBtn = document.getElementById('btnUploadDrive');
+      uploadBtn.disabled = true;
+      uploadBtn.innerText = "⏳ 雲端上傳中...";
+      setUploadStatus("🚀 正在上傳至 Google 雲端硬碟...", "#e65100", "#fff3e0");
+
+      const reader = new FileReader();
+      reader.onload = async function() {
+        const payload = {
+          type: "audio",
+          fileName: fileName,
+          mimeType: currentAudioBlob.type || 'audio/webm',
+          audioBase64: reader.result
+        };
+
+        try {
+          const response = await fetch(GOOGLE_SCRIPT_URL, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify(payload)
+          });
+          const result = await response.json();
+          if (result.status === "success") {
+            cloudDriveFileUrl = result.fileUrl;
+            uploadBtn.style.display = "none";
+            setUploadStatus(
+              `✅ 雲端錄音儲存成功！<a href="${result.fileUrl}" target="_blank" style="color:#0d47a1; font-weight:700; text-decoration:underline; margin-left:6px;">🔗 線上收聽</a>`,
+              "#2e7d32",
+              "#e8f5e9"
+            );
+            alert("🎉 錄音檔已存入您的 Google Drive 資料夾！");
+          } else {
+            throw new Error(result.message);
+          }
+        } catch (err) {
+          uploadBtn.disabled = false;
+          uploadBtn.innerText = "☁️ 重新嘗試上傳";
+          setUploadStatus(`❌ 上傳失敗：${err.message}`, "#c62828", "#ffebee");
+        }
+      };
+      reader.readAsDataURL(currentAudioBlob);
+    }
+
+    function setUploadStatus(msg, color, bg) {
+      const box = document.getElementById('uploadStatusMsg');
+      box.innerHTML = msg;
+      box.style.display = "block";
+      box.style.color = color;
+      box.style.background = bg;
+    }
+
+    // 2. 同步儲存到 Google 雲端
+    async function syncCurrentAuditToGoogleDrive() {
+      const year = document.getElementById('headerYearSelect').value || "115";
+      const dept = document.getElementById('evalDept').value || "未填單位";
+      const date = document.getElementById('evalDate').value || new Date().toISOString().split('T')[0];
+      const auditUnit = document.getElementById('auditUnit').value || "";
+      const dr = document.getElementById('staffDoctor').value || "未填";
+      const np = document.getElementById('staffNP').value || "未填";
+      const n1 = document.getElementById('staffNurse1').value || "未填";
+      const n2 = document.getElementById('staffNurse2').value || "未填";
+      const n3 = document.getElementById('staffNurse3').value || "未填";
+      const examA = document.getElementById('examinerA').value || "";
+      const examB = document.getElementById('examinerB').value || "";
+      const scoreA = document.getElementById('scoreA').innerText;
+      const scoreB = document.getElementById('scoreB').innerText;
+      const total = Number(document.getElementById('totalScore').innerText);
+      const isPassed = total >= 90 ? "合格通過 (≥90分)" : "不合格/待加強 (<90分)";
+      const comments = document.getElementById('overallFeedback').value || "無";
+
+      let content = `成組 CPCR 臨床稽核評核成果報告表\n`;
+      content += `==============================================\n`;
+      content += `製表人： 內科專師 曾妍鳳 （連絡電話 26-8112）\n`;
+      content += `評核年度：${year}年度\n`;
+      content += `受評單位：${dept}\n`;
+      content += `評核日期：${date}\n`;
+      content += `外部稽核單位：${auditUnit}\n`;
+      content += `受評急救醫師：${dr}\n`;
+      content += `受評專科護理師(NP)：${np}\n`;
+      content += `受評護理師編制：主護[${n1}], 流動[${n2}], 支援[${n3}]\n`;
+      content += `A考官(Airway)：${examA} ｜ B考官(主護/流動)：${examB}\n`;
+      content += `----------------------------------------------\n`;
+      content += `【成績結算】\n`;
+      content += `A 表 Airway 得分：${scoreA} / 52 分\n`;
+      content += `B 表 主護流動得分：${scoreB} / 48 分\n`;
+      content += `整合總成績：${total} / 100 分 (評核結果：${isPassed})\n`;
+      content += `檢討會錄音連結：${cloudDriveFileUrl || '無'}\n`;
+      content += `檢討會(Debriefing)回饋建議：\n${comments}\n`;
+      content += `==============================================\n`;
+      content += `【逐題評分明細】\n`;
+      questionsA.forEach(q => {
+        const val = document.querySelector(`input[name="${q.id}"]:checked`)?.value || "0";
+        content += `[A表] ${q.id}. ${q.text} -> 得分: ${val} (滿分: ${q.max})\n`;
+      });
+      questionsB.forEach(q => {
+        const val = document.querySelector(`input[name="${q.id}"]:checked`)?.value || "0";
+        content += `[B表] ${q.id}. ${q.text} -> 得分: ${val} (滿分: ${q.max})\n`;
+      });
+
+      const fileName = `${year}年度_${dept}_CPCR評核表_${date}.txt`;
+
+      try {
+        const payload = {
+          type: "auditReport",
+          fileName: fileName,
+          content: content
+        };
+
+        const res = await fetch(GOOGLE_SCRIPT_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload)
+        });
+        const json = await res.json();
+        if (json.status === "success") {
+          alert(`🎉 評核表已同步儲存到 Google 雲端！\n檔名：${fileName}\n\n已成功存入雲端硬碟「CPCR評核資料專區」！`);
+          if (json.fileUrl) window.open(json.fileUrl, '_blank');
+        } else {
+          throw new Error(json.message);
+        }
+      } catch (e) {
+        alert("雲端同步失敗：" + e.message);
+      }
+    }
+
+    // ================= 後台數據庫 =================
+    function getStorageData() {
+      const data = localStorage.getItem("CPCR_AUDIT_DATABASE");
+      return data ? JSON.parse(data) : [];
+    }
+
+    function saveRecordToDatabase() {
+      const year = document.getElementById('headerYearSelect').value || "115";
+      const totalScore = Number(document.getElementById('totalScore').innerText);
+      const record = {
+        id: "REC_" + Date.now(),
+        year: year,
+        dept: document.getElementById('evalDept').value || "未填單位",
+        date: document.getElementById('evalDate').value || "",
+        auditUnit: document.getElementById('auditUnit').value || "",
+        dr: document.getElementById('staffDoctor').value || "未填",
+        np: document.getElementById('staffNP').value || "未填",
+        n1: document.getElementById('staffNurse1').value || "未填",
+        n2: document.getElementById('staffNurse2').value || "未填",
+        n3: document.getElementById('staffNurse3').value || "未填",
+        examinerA: document.getElementById('examinerA').value || "",
+        examinerB: document.getElementById('examinerB').value || "",
+        scoreA: Number(document.getElementById('scoreA').innerText),
+        scoreB: Number(document.getElementById('scoreB').innerText),
+        total: totalScore,
+        isPassed: totalScore >= 90,
+        feedback: document.getElementById('overallFeedback').value || "",
+        audioDriveUrl: cloudDriveFileUrl || "未上傳雲端",
+        creator: "內科專師 曾妍鳳",
+        itemsA: {},
+        itemsB: {}
+      };
+
+      questionsA.forEach(q => {
+        record.itemsA[q.id] = document.querySelector(`input[name="${q.id}"]:checked`)?.value || "0";
+      });
+      questionsB.forEach(q => {
+        record.itemsB[q.id] = document.querySelector(`input[name="${q.id}"]:checked`)?.value || "0";
+      });
+
+      const db = getStorageData();
+      db.push(record);
+      localStorage.setItem("CPCR_AUDIT_DATABASE", JSON.stringify(db));
+      alert(`✅ 成功儲存！該筆評核紀錄已入庫 [${record.year}年度 / 單位: ${record.dept} / 得分: ${record.total}分 (${record.isPassed ? '通過' : '不通過'})]。\n可切換至「後台數據中心」查閱統計。`);
+    }
+
+    function deleteRecord(recId) {
+      if (!confirm("確定要刪除這筆評核紀錄嗎？")) return;
+      let db = getStorageData();
+      db = db.filter(r => r.id !== recId);
+      localStorage.setItem("CPCR_AUDIT_DATABASE", JSON.stringify(db));
+      renderBackendDashboard();
+    }
+
+    function renderBackendDashboard() {
+      const db = getStorageData();
+      const count = db.length;
+      document.getElementById('statCount').innerText = count;
+
+      if (count === 0) {
+        document.getElementById('statPassRate').innerText = "0%";
+        document.getElementById('statAvgScore').innerText = "0";
+        document.getElementById('statAvgA').innerText = "0";
+        document.getElementById('statAvgB').innerText = "0";
+        document.getElementById('historyTableBody').innerHTML = 
+          `<tr><td colspan="13" style="text-align:center; color:#94a3b8; padding:20px;">目前尚無儲存的歷史評核資料，請完成評核後點選「儲存並歸檔至後台數據庫」。</td></tr>`;
+        return;
+      }
+
+      let sumTotal = 0;
+      let sumA = 0;
+      let sumB = 0;
+      let passCount = 0;
+
+      let tbodyHTML = "";
+      db.forEach(r => {
+        sumTotal += r.total;
+        sumA += r.scoreA;
+        sumB += r.scoreB;
+        if (r.total >= 90) passCount++;
+
+        const passStr = r.total >= 90 ? `<span style="color:#2e7d32; font-weight:700;">✓ 合格通過 (${r.total}分)</span>` : 
+                        `<span style="color:#c62828; font-weight:700;">✗ 不合格 (${r.total}分)</span>`;
+
+        const audioLinkHTML = r.audioDriveUrl && r.audioDriveUrl.startsWith("http") ? 
+          `<a href="${r.audioDriveUrl}" target="_blank" style="color:var(--color-b-dark); font-weight:700; text-decoration:underline;">🎧 雲端收聽</a>` : 
+          `<span style="color:#94a3b8;">${r.audioDriveUrl || '無'}</span>`;
+
+        tbodyHTML += `
+          <tr>
+            <td><strong>${r.year || '115'}年</strong></td>
+            <td>${r.date}</td>
+            <td>${r.dept}</td>
+            <td>${r.dr}</td>
+            <td>${r.np}</td>
+            <td>${r.n1}, ${r.n2}, ${r.n3}</td>
+            <td>${r.scoreA}</td>
+            <td>${r.scoreB}</td>
+            <td style="font-weight:700;">${r.total}</td>
+            <td>${passStr}</td>
+            <td>${audioLinkHTML}</td>
+            <td>${r.examinerA} / ${r.examinerB}</td>
+            <td>
+              <button onclick="deleteRecord('${r.id}')" style="background:#ffebee; border:1px solid #ffcdd2; color:#c62828; padding:3px 8px; border-radius:4px; cursor:pointer;">刪除</button>
+            </td>
+          </tr>
+        `;
+      });
+
+      document.getElementById('statPassRate').innerText = `${Math.round((passCount / count) * 100)}%`;
+      document.getElementById('statAvgScore').innerText = (sumTotal / count).toFixed(1);
+      document.getElementById('statAvgA').innerText = (sumA / count).toFixed(1);
+      document.getElementById('statAvgB').innerText = (sumB / count).toFixed(1);
+      document.getElementById('historyTableBody').innerHTML = tbodyHTML;
+    }
+
+    // 1. 匯出年度品管報表 (CSV/Excel)
+    function exportYearlyReportCSV() {
+      const db = getStorageData();
+      if (db.length === 0) {
+        alert("目前資料庫尚無任何紀錄，無法匯出年度統計報表！");
+        return;
+      }
+
+      let csv = "\uFEFF";
+      csv += "紀錄代碼,製表人,評核年度,評核日期,受評單位/病房,外部稽核單位,受評醫師,受評專師(NP),受評護理師1(主護),受評護理師2(流動),受評護理師3(支援),A考官(Airway),B考官(主護流動),A表得分(滿分52),B表得分(滿分48),整合總分(滿分100),通過結果(≥90分),Google雲端錄音連結,回饋建議";
+
+      questionsA.forEach(q => csv += `,"[A表] ${q.id}"`);
+      questionsB.forEach(q => csv += `,"[B表] ${q.id}"`);
+      csv += "\n";
+
+      db.forEach(r => {
+        const level = r.total >= 90 ? "合格通過" : "不合格(待加強)";
+        csv += `"${r.id}","內科專師 曾妍鳳","${r.year || '115'}年","${r.date}","${r.dept}","${r.auditUnit}","${r.dr}","${r.np}","${r.n1}","${r.n2}","${r.n3}","${r.examinerA}","${r.examinerB}",${r.scoreA},${r.scoreB},${r.total},"${level}","${r.audioDriveUrl || ''}","${r.feedback.replace(/"/g, '""')}"`;
+        
+        questionsA.forEach(q => {
+          csv += `,${r.itemsA[q.id] || 0}`;
+        });
+        questionsB.forEach(q => {
+          csv += `,${r.itemsB[q.id] || 0}`;
+        });
+        csv += "\n";
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `CPCR臨床稽核年度品質追蹤報表_${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // 3. 匯出當前場次評核表 (CSV)
+    function exportCurrentCSV() {
+      const year = document.getElementById('headerYearSelect').value || "115";
+      const dept = document.getElementById('evalDept').value;
+      const date = document.getElementById('evalDate').value;
+      const auditUnit = document.getElementById('auditUnit').value;
+      const dr = document.getElementById('staffDoctor').value;
+      const np = document.getElementById('staffNP').value;
+      const n1 = document.getElementById('staffNurse1').value;
+      const n2 = document.getElementById('staffNurse2').value;
+      const n3 = document.getElementById('staffNurse3').value;
+      const examA = document.getElementById('examinerA').value;
+      const examB = document.getElementById('examinerB').value;
+      const scoreA = document.getElementById('scoreA').innerText;
+      const scoreB = document.getElementById('scoreB').innerText;
+      const total = Number(document.getElementById('totalScore').innerText);
+      const isPassed = total >= 90 ? "合格通過 (≥90分)" : "不合格/待加強 (<90分)";
+      const comments = document.getElementById('overallFeedback').value.replace(/"/g, '""');
+
+      let csv = "\uFEFF";
+      csv += "評核欄位,資料內容\n";
+      csv += `系統製表人,"內科專師 曾妍鳳 （連絡電話 26-8112）"\n`;
+      csv += `評核年度,"${year}年"\n`;
+      csv += `受評單位,"${dept}"\n`;
+      csv += `評核日期,"${date}"\n`;
+      csv += `稽核單位,"${auditUnit}"\n`;
+      csv += `受評醫師,"${dr}"\n`;
+      csv += `受評專科護理師,"${np}"\n`;
+      csv += `受評護理師1(主護),"${n1}"\n`;
+      csv += `受評護理師2(流動),"${n2}"\n`;
+      csv += `受評護理師3(支援),"${n3}"\n`;
+      csv += `A考官,"${examA}"\n`;
+      csv += `B考官,"${examB}"\n`;
+      csv += `A表得分(滿分52),${scoreA}\n`;
+      csv += `B表得分(滿分48),${scoreB}\n`;
+      csv += `整合總分(滿分100),${total}\n`;
+      csv += `評核通過判定,"${isPassed}"\n`;
+      csv += `Google雲端錄音連結,"${cloudDriveFileUrl || '未上傳'}"\n`;
+      csv += `綜合評語回饋,"${comments}"\n\n`;
+
+      csv += "表單類別,題號,評核項目指標,滿分,實得分數\n";
+      questionsA.forEach(q => {
+        const val = document.querySelector(`input[name="${q.id}"]:checked`)?.value || "0";
+        csv += `"A表(Airway)","${q.id}","${q.text.replace(/"/g, '""')}",${q.max},${val}\n`;
+      });
+      questionsB.forEach(q => {
+        const val = document.querySelector(`input[name="${q.id}"]:checked`)?.value || "0";
+        csv += `"B表(主護+流動)","${q.id}","${q.text.replace(/"/g, '""')}",${q.max},${val}\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `CPCR單場評核_${year}年_${dept || '單位'}_${date}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    window.onload = function() {
+      initQuiz('formA', questionsA);
+      initQuiz('formB', questionsB);
+      syncYear("115");
+      renderBackendDashboard();
+    };
+  </script>
+</body>
+</html>
