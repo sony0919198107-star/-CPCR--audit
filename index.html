@@ -256,21 +256,27 @@
       box-shadow: 0 -3px 8px rgba(159, 117, 211, 0.08);
     }
 
+    /* 評核項目列表與排版 */
     .item-row {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 16px;
+      display: flex;
+      justify-content: space-between;
       align-items: center;
-      padding: 16px 10px;
+      flex-wrap: wrap;
+      gap: 14px;
+      padding: 14px 10px;
       border-bottom: 1px solid var(--border-color);
       border-radius: var(--radius-sm);
-      transition: background-color 0.3s;
+      transition: background-color 0.25s;
     }
     .item-row:hover { background-color: #fafcfe; }
     .item-row.unanswered {
       background-color: #fff1f0 !important;
       border-left: 4px solid var(--color-a-dark);
       padding-left: 12px;
+    }
+    .item-left {
+      flex: 1;
+      min-width: 250px;
     }
     .item-number {
       font-weight: 800;
@@ -300,6 +306,7 @@
       margin-left: 6px;
     }
 
+    /* 選項膠囊按鈕 */
     .options-container {
       display: flex;
       gap: 8px;
@@ -309,11 +316,11 @@
       display: inline-flex;
       align-items: center;
       gap: 5px;
-      padding: 7px 14px;
+      padding: 8px 16px;
       border: 1.5px solid var(--border-color);
       border-radius: 20px;
       cursor: pointer;
-      font-size: 0.88rem;
+      font-size: 0.9rem;
       background: #fff;
       transition: all 0.18s;
       user-select: none;
@@ -324,15 +331,16 @@
     }
     .option-pill input[type="radio"] { display: none; }
     .option-pill.active {
-      background: var(--color-d-light);
-      border-color: var(--color-d-dark);
-      color: var(--color-d-dark);
+      background: var(--color-d-light) !important;
+      border-color: var(--color-d-dark) !important;
+      color: var(--color-d-dark) !important;
       font-weight: 700;
     }
     .option-pill.zero-active {
       background: var(--color-a-light) !important;
       border-color: var(--color-a-dark) !important;
       color: var(--color-a-dark) !important;
+      font-weight: 700;
     }
 
     .miss-alert-card {
@@ -447,6 +455,7 @@
       transition: all 0.2s;
     }
     .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
     .btn-mint { background: var(--color-d); color: #15470a; }
     .btn-purple { background: var(--color-b); color: white; }
     .btn-coral { background: var(--color-a); color: #6d1b13; }
@@ -457,12 +466,14 @@
       padding-top: 18px;
       border-top: 1.5px dashed var(--border-color);
       display: flex;
-      justify-content: center;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
     }
     .btn-submit-exam {
       background: var(--color-b);
       color: white;
-      padding: 12px 36px;
+      padding: 14px 36px;
       font-size: 1.05rem;
       border-radius: 28px;
       font-weight: 800;
@@ -609,17 +620,17 @@
       <button class="tab-btn active-tab" onclick="switchPane('paneA', this)">🫁 表單 A：Airway 呼吸道組 (滿分 52 分)</button>
       <button class="tab-btn" onclick="switchPane('paneB', this)">⚡ 表單 B：主護 + 流動組 (滿分 48 分)</button>
       <button class="tab-btn" onclick="switchPane('paneSummary', this)">📋 本次評核總結與缺失即評 (Debriefing)</button>
-      <!-- 管理者受保護頁籤 -->
       <button class="tab-btn" onclick="requestAdminAccess(this)" style="color:var(--color-b-dark); background:var(--color-c-light);">🔒 5. 後台數據中心與品管統計 (管理員專用)</button>
     </div>
 
     <!-- 3. 表單 A -->
     <div id="paneA" class="tab-pane">
       <div class="card">
-        <h3 style="margin:0 0 16px; color:var(--color-b-dark);">A 考官評核表（共 20 題，滿分 52 分）<span style="font-size:0.85rem; color:#dc3545; font-weight:normal; margin-left:8px;">* 每題皆為必填項目，點選後方可送出</span></h3>
+        <h3 style="margin:0 0 16px; color:var(--color-b-dark);">A 考官評核表（共 20 題，滿分 52 分）<span style="font-size:0.85rem; color:#dc3545; font-weight:normal; margin-left:8px;">* A考官獨立評分，20題全點選後即可直接送出雲端</span></h3>
         <form id="formA"></form>
         <div class="submit-btn-box">
-          <button class="btn btn-submit-exam" onclick="submitExam('A')">✓ 送出 A 考官評核成績</button>
+          <button type="button" class="btn btn-submit-exam" id="btnSubmitA" onclick="submitIndependentExam('A')">🚀 送出 A 考官成績並直接同步至雲端試算表</button>
+          <span style="font-size:0.8rem; color:var(--text-muted);">註：A 考官送出無需等待 B 考官，系統將獨立歸檔至「CPCR評核年度品管總表」</span>
         </div>
       </div>
     </div>
@@ -627,10 +638,11 @@
     <!-- 4. 表單 B -->
     <div id="paneB" class="tab-pane" style="display:none;">
       <div class="card">
-        <h3 style="margin:0 0 16px; color:var(--color-d-dark);">B 考官評核表（共 24 題，滿分 48 分）<span style="font-size:0.85rem; color:#dc3545; font-weight:normal; margin-left:8px;">* 每題皆為必填項目，點選後方可送出</span></h3>
+        <h3 style="margin:0 0 16px; color:var(--color-d-dark);">B 考官評核表（共 24 題，滿分 48 分）<span style="font-size:0.85rem; color:#dc3545; font-weight:normal; margin-left:8px;">* B考官獨立評分，24題全點選後即可直接送出雲端</span></h3>
         <form id="formB"></form>
         <div class="submit-btn-box">
-          <button class="btn btn-submit-exam" style="background:var(--color-d-dark);" onclick="submitExam('B')">✓ 送出 B 考官評核成績</button>
+          <button type="button" class="btn btn-submit-exam" id="btnSubmitB" style="background:var(--color-d-dark);" onclick="submitIndependentExam('B')">🚀 送出 B 考官成績並直接同步至雲端試算表</button>
+          <span style="font-size:0.8rem; color:var(--text-muted);">註：B 考官送出無需等待 A 考官，系統將獨立歸檔至「CPCR評核年度品管總表」</span>
         </div>
       </div>
     </div>
@@ -671,10 +683,9 @@
               <div id="uploadStatusMsg" style="display:none; margin-top:8px; font-size:0.82rem; padding:4px 10px; border-radius:6px; font-weight:600;"></div>
             </div>
 
-            <!-- 手機端核心一鍵按鈕 -->
             <div style="margin-top: 16px; display:flex; flex-direction:column; gap:8px;">
               <button class="btn btn-mint" id="btnQuickSync" style="width:100%; justify-content:center; padding:13px; font-size:1.05rem;" onclick="quickSyncToGoogleSheet()">
-                🚀 一鍵歸檔並同步至 Google 雲端試算表
+                🚀 同步檢討會評語/錄音及已評成績至雲端試算表
               </button>
             </div>
           </div>
@@ -682,7 +693,7 @@
       </div>
     </div>
 
-    <!-- 6. 後台數據中心 (管理員專用密碼保護區，直連雲端總表) -->
+    <!-- 6. 後台數據中心 -->
     <div id="paneBackend" class="tab-pane" style="display:none;">
       <div class="card">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
@@ -701,7 +712,6 @@
           </div>
         </div>
 
-        <!-- 圖一：五大指標卡片（即時與雲端試算表連動） -->
         <div class="stat-dashboard">
           <div class="stat-card" style="border-top-color: var(--color-b);">
             <div class="desc">總受評場次 / 紀錄數</div>
@@ -758,11 +768,6 @@
       </div>
     </div>
 
-    <!-- 底部功能按鈕 -->
-    <div class="btn-group no-print" style="margin-top: 14px;">
-      <button class="btn btn-mint" onclick="syncCurrentAuditToGoogleDrive()">2. 同步儲存到 Google 雲端 (試算表)</button>
-    </div>
-
     <!-- 版權告示區塊 -->
     <footer class="copyright-footer">
       <div class="author-badge">製表人： 內科專師 曾妍鳳 （連絡電話 26-8112）</div>
@@ -774,9 +779,9 @@
   <script>
     // ================= 管理者權限設定 =================
     const ADMIN_PASSWORD = "268112";
-    let globalCloudRecords = []; // 儲存自 Google 試算表抓取的全體紀錄
+    let globalCloudRecords = [];
 
-    // ================= 版權與安全防護層 =================
+    // ================= 版權安全防護 =================
     document.addEventListener('contextmenu', function(e) {
       e.preventDefault();
       alert("⚠️ 系統版權提示：\n製表人： 內科專師 曾妍鳳 （連絡電話 26-8112）\n本系統代碼禁止未經授權複製或檢視！");
@@ -865,6 +870,7 @@
         const row = document.createElement("div");
         row.className = "item-row";
         row.id = `row_${q.id}`;
+
         let pills = "";
         q.options.forEach(opt => {
           pills += `
@@ -876,7 +882,7 @@
         });
 
         row.innerHTML = `
-          <div>
+          <div class="item-left">
             <div>
               <span class="item-number">${index + 1}.</span>${q.text}
               <span class="badge-required">*必評</span>
@@ -923,13 +929,28 @@
       return unanswered;
     }
 
-    function submitExam(type) {
+    function getDeductionsByType(type) {
+      let deductions = [];
+      const list = type === 'A' ? questionsA : questionsB;
+      const prefix = type === 'A' ? '[A表]' : '[B表]';
+      list.forEach(q => {
+        const val = document.querySelector(`input[name="${q.id}"]:checked`)?.value;
+        if (val !== undefined && Number(val) < q.max) {
+          deductions.push(`${prefix} ${q.text} (-${q.max - Number(val)}分)`);
+        }
+      });
+      return deductions.length > 0 ? deductions.join("； ") : "無扣分項目";
+    }
+
+    // ================= 核心異動：A、B 考官各自獨立送出與同步雲端 =================
+    async function submitIndependentExam(type) {
       const questions = type === 'A' ? questionsA : questionsB;
       const unans = checkUnanswered(questions);
 
+      // 只檢查該考官自己負責的表單題目是否點選完整
       if (unans.length > 0) {
         const unansText = unans.map(u => `• 第 ${u.index} 題：${u.text.substring(0, 18)}...`).join("\n");
-        alert(`⚠️ ${type} 考官評核尚未完成！\n\n還有 ${unans.length} 題尚未點選評分：\n${unansText}\n\n請逐條評定點選後再送出成績。`);
+        alert(`⚠️ ${type} 考官評核尚未完成！\n\n您的 ${type} 表還有 ${unans.length} 題尚未點選評分：\n${unansText}\n\n請逐條點選完成後再送出成績。`);
         
         const firstUnansEl = document.getElementById(`row_${unans[0].id}`);
         if (firstUnansEl) {
@@ -939,19 +960,78 @@
       }
 
       calcScores();
-      const score = type === 'A' ? document.getElementById('scoreA').innerText : document.getElementById('scoreB').innerText;
-      const max = type === 'A' ? 52 : 48;
-      alert(`✅ ${type} 考官所有項目已評定完畢！\n得分：${score} / ${max} 分\n已為您切換至「評核總結與缺失即評」頁面。`);
-      const summaryBtn = document.querySelectorAll('.tab-btn')[2];
-      switchPane('paneSummary', summaryBtn);
+      const btnId = type === 'A' ? 'btnSubmitA' : 'btnSubmitB';
+      const btn = document.getElementById(btnId);
+      const originalText = btn.innerText;
+      btn.disabled = true;
+      btn.innerText = `⏳ 正在將 ${type} 考官成績寫入雲端試算表...`;
+
+      const year = document.getElementById('headerYearSelect').value || "115";
+      const dept = document.getElementById('evalDept').value || "未填單位";
+      const date = document.getElementById('evalDate').value || new Date().toISOString().split('T')[0];
+      const auditUnit = document.getElementById('auditUnit').value || "急救品管組";
+      const dr = document.getElementById('staffDoctor').value || "未填";
+      const np = document.getElementById('staffNP').value || "未填";
+      const n1 = document.getElementById('staffNurse1').value || "未填";
+      const n2 = document.getElementById('staffNurse2').value || "未填";
+      const n3 = document.getElementById('staffNurse3').value || "未填";
+      const examA = document.getElementById('examinerA').value || (type === 'A' ? "A考官已評" : "由A考官獨立上傳");
+      const examB = document.getElementById('examinerB').value || (type === 'B' ? "B考官已評" : "由B考官獨立上傳");
+      
+      const scoreA = type === 'A' ? Number(document.getElementById('scoreA').innerText) : 0;
+      const scoreB = type === 'B' ? Number(document.getElementById('scoreB').innerText) : 0;
+      const total = scoreA + scoreB;
+      const maxScore = type === 'A' ? 52 : 48;
+
+      const payload = {
+        type: "auditRecord",
+        year: year,
+        date: date,
+        dept: dept,
+        auditUnit: `${auditUnit} [${type}考官獨立提交]`,
+        dr: dr,
+        np: np,
+        n1: n1,
+        n2: n2,
+        n3: n3,
+        examinerA: examA,
+        examinerB: examB,
+        scoreA: scoreA,
+        scoreB: scoreB,
+        total: total,
+        deductions: getDeductionsByType(type),
+        feedback: `[${type}考官單獨送出] ` + (document.getElementById('overallFeedback').value || "現場已完成評分"),
+        audioDriveUrl: cloudDriveFileUrl || ""
+      };
+
+      try {
+        const res = await fetch(GOOGLE_SCRIPT_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload)
+        });
+        const json = await res.json();
+        if (json.status === "success") {
+          alert(`🎉 ${type} 考官成績送出成功！\n\n受評單位：${dept}\n${type} 表得分：${type === 'A' ? scoreA : scoreB} / ${maxScore} 分\n\n資料已獨立同步寫入 Google 試算表「CPCR評核年度品管總表」！`);
+          // 切換到總結頁面方便進行口頭回饋與查看本表扣分項目
+          const summaryBtn = document.querySelectorAll('.tab-btn')[2];
+          switchPane('paneSummary', summaryBtn);
+        } else {
+          throw new Error(json.message);
+        }
+      } catch (e) {
+        alert(`❌ ${type} 考官雲端同步失敗：` + e.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerText = originalText;
+      }
     }
 
-    // 管理者密碼驗證並自動載入雲端試算表數據
     function requestAdminAccess(btnEl) {
       const pwd = prompt("🔒 此區為管理員品管總表專區\n請輸入管理者密碼以解鎖登入：");
       if (pwd === ADMIN_PASSWORD) {
         switchPane('paneBackend', btnEl);
-        fetchCloudRecords(); // 密碼正確直接拉取雲端試算表資料
+        fetchCloudRecords();
       } else if (pwd !== null) {
         alert("❌ 密碼錯誤，拒絕存取！只有管理者才能查閱統計總表。");
       }
@@ -1173,36 +1253,23 @@
       box.style.background = bg;
     }
 
-    function getDeductionsSummary() {
-      let deductions = [];
-      questionsA.forEach(q => {
-        const val = document.querySelector(`input[name="${q.id}"]:checked`)?.value;
-        if (val !== undefined && Number(val) < q.max) {
-          deductions.push(`[A表] ${q.text} (-${q.max - Number(val)}分)`);
-        }
-      });
-      questionsB.forEach(q => {
-        const val = document.querySelector(`input[name="${q.id}"]:checked`)?.value;
-        if (val !== undefined && Number(val) < q.max) {
-          deductions.push(`[B表] ${q.text} (-${q.max - Number(val)}分)`);
-        }
-      });
-      return deductions.length > 0 ? deductions.join("； ") : "無扣分項目";
-    }
-
-    // ================= 寫入 Google 試算表 =================
-    async function syncCurrentAuditToGoogleDrive() {
+    // 總結頁面同步功能（只要完成A或B其中之一，或兩者皆完成即可同步）
+    async function quickSyncToGoogleSheet() {
       const unansA = checkUnanswered(questionsA);
       const unansB = checkUnanswered(questionsB);
 
-      if (unansA.length > 0 || unansB.length > 0) {
-        let msg = "⚠️ 無法同步至雲端！評核表尚有題目未完成評分：\n";
-        if (unansA.length > 0) msg += `\n• A 表尚有 ${unansA.length} 題未評`;
-        if (unansB.length > 0) msg += `\n• B 表尚有 ${unansB.length} 題未評`;
-        msg += "\n\n請務必將所有項目皆完成點選評定後再進行歸檔同步。";
-        alert(msg);
-        return false;
+      const isADone = (unansA.length === 0);
+      const isBDone = (unansB.length === 0);
+
+      // 若兩張表都完全沒評完，才阻擋
+      if (!isADone && !isBDone) {
+        alert(`⚠️ 尚無完整評核表可送出！\n\n• A 表尚有 ${unansA.length} 題未評\n• B 表尚有 ${unansB.length} 題未評\n\n請至少完成「A表」或「B表」其中一份的評分後再進行同步。`);
+        return;
       }
+
+      const btn = document.getElementById('btnQuickSync');
+      btn.disabled = true;
+      btn.innerText = "⏳ 正在同步檢討資料至雲端試算表...";
 
       calcScores();
       const year = document.getElementById('headerYearSelect').value || "115";
@@ -1214,12 +1281,16 @@
       const n1 = document.getElementById('staffNurse1').value || "未填";
       const n2 = document.getElementById('staffNurse2').value || "未填";
       const n3 = document.getElementById('staffNurse3').value || "未填";
-      const examA = document.getElementById('examinerA').value || "";
-      const examB = document.getElementById('examinerB').value || "";
-      const scoreA = Number(document.getElementById('scoreA').innerText);
-      const scoreB = Number(document.getElementById('scoreB').innerText);
-      const total = Number(document.getElementById('totalScore').innerText);
+      const examA = document.getElementById('examinerA').value || (isADone ? "" : "未在此裝置評分");
+      const examB = document.getElementById('examinerB').value || (isBDone ? "" : "未在此裝置評分");
+      const scoreA = isADone ? Number(document.getElementById('scoreA').innerText) : 0;
+      const scoreB = isBDone ? Number(document.getElementById('scoreB').innerText) : 0;
+      const total = scoreA + scoreB;
       const comments = document.getElementById('overallFeedback').value || "無特殊建議";
+
+      let dedSummary = [];
+      if (isADone) dedSummary.push(getDeductionsByType('A'));
+      if (isBDone) dedSummary.push(getDeductionsByType('B'));
 
       const payload = {
         type: "auditRecord",
@@ -1237,7 +1308,7 @@
         scoreA: scoreA,
         scoreB: scoreB,
         total: total,
-        deductions: getDeductionsSummary(),
+        deductions: dedSummary.join(" ｜ "),
         feedback: comments,
         audioDriveUrl: cloudDriveFileUrl || ""
       };
@@ -1250,32 +1321,20 @@
         });
         const json = await res.json();
         if (json.status === "success") {
-          alert(`🎉 評核資料已成功寫入 Google 試算表「CPCR評核年度品管總表」！\n所有考官與管理者皆可在雲端即時查閱。\n\n試算表連結：\n${json.sheetUrl || '已存入雲端總表'}`);
+          alert(`🎉 評核與檢討資料已成功寫入 Google 試算表「CPCR評核年度品管總表」！`);
           if (json.sheetUrl) window.open(json.sheetUrl, '_blank');
-          return true;
         } else {
           throw new Error(json.message);
         }
       } catch (e) {
         alert("雲端同步至試算表失敗：" + e.message);
-        return false;
-      }
-    }
-
-    async function quickSyncToGoogleSheet() {
-      const btn = document.getElementById('btnQuickSync');
-      btn.disabled = true;
-      btn.innerText = "⏳ 正在驗證題目並同步至試算表...";
-
-      try {
-        await syncCurrentAuditToGoogleDrive();
       } finally {
         btn.disabled = false;
-        btn.innerText = "🚀 一鍵歸檔並同步至 Google 雲端試算表";
+        btn.innerText = "🚀 同步檢討會評語/錄音及已評成績至雲端試算表";
       }
     }
 
-    // ================= 核心：直連 Google 雲端試算表並連動五大指標 =================
+    // ================= 直連 Google 雲端試算表讀取 =================
     async function fetchCloudRecords() {
       const badge = document.getElementById("cloudStatusBadge");
       const spin = document.getElementById("spinReload");
@@ -1307,7 +1366,6 @@
       }
     }
 
-    // 計算並連動圖一的五大核心指標
     function renderCloudDashboard(records) {
       const count = records.length;
       document.getElementById('statCount').innerText = count;
@@ -1324,20 +1382,21 @@
 
       let sumTotal = 0;
       let sumA = 0;
+      let countA = 0;
       let sumB = 0;
+      let countB = 0;
       let passCount = 0;
 
       let tbodyHTML = "";
-      // 由新到舊倒序顯示
       for (let i = records.length - 1; i >= 0; i--) {
         const r = records[i];
         sumTotal += r.total;
-        sumA += r.scoreA;
-        sumB += r.scoreB;
+        if (r.scoreA > 0) { sumA += r.scoreA; countA++; }
+        if (r.scoreB > 0) { sumB += r.scoreB; countB++; }
         if (r.total >= 90) passCount++;
 
         const passStr = r.total >= 90 ? `<span style="color:#2e7d32; font-weight:700;">✓ 合格通過 (${r.total}分)</span>` : 
-                        `<span style="color:#c62828; font-weight:700;">✗ 不合格 (${r.total}分)</span>`;
+                        `<span style="color:#c62828; font-weight:700;">✗ 待加強/單表 (${r.total}分)</span>`;
 
         const audioLinkHTML = r.audioDriveUrl && r.audioDriveUrl.startsWith("http") ? 
           `<a href="${r.audioDriveUrl}" target="_blank" style="color:var(--color-b-dark); font-weight:700; text-decoration:underline;">🎧 線上收聽</a>` : 
@@ -1345,7 +1404,7 @@
 
         tbodyHTML += `
           <tr>
-            <td><strong>${r.year || '115'}年</strong></td>
+            <td><strong>${String(r.year).includes('年') ? r.year : r.year + '年'}</strong></td>
             <td>${r.date}</td>
             <td><strong>${r.dept}</strong></td>
             <td>${r.dr}</td>
@@ -1362,15 +1421,13 @@
         `;
       }
 
-      // 連動圖一中的 5 個統計卡片
       document.getElementById('statPassRate').innerText = `${Math.round((passCount / count) * 100)}%`;
       document.getElementById('statAvgScore').innerText = (sumTotal / count).toFixed(1);
-      document.getElementById('statAvgA').innerText = (sumA / count).toFixed(1);
-      document.getElementById('statAvgB').innerText = (sumB / count).toFixed(1);
+      document.getElementById('statAvgA').innerText = countA > 0 ? (sumA / countA).toFixed(1) : "0.0";
+      document.getElementById('statAvgB').innerText = countB > 0 ? (sumB / countB).toFixed(1) : "0.0";
       document.getElementById('historyTableBody').innerHTML = tbodyHTML;
     }
 
-    // 匯出年度品管報表 (CSV/Excel) - 依據雲端試算表真實資料
     function exportYearlyReportCSV() {
       if (globalCloudRecords.length === 0) {
         alert("雲端試算表尚無任何紀錄，無法匯出年度品管報表！");
